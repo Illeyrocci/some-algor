@@ -26,52 +26,29 @@ public:
 };
 
 
-//HAND-MADE PRIORITY QUEUE WITH OPTIONAL DATA (VIA ".SECOND")
-void heap_push(vector<pair<int, int>>& heap, pair<int, int> priority_goblin){
+//HAND-MADE PRIORITY QUEUE
+void heap_push(vector<int>& heap, int x){
     int pos = (int) heap.size();
-    heap.push_back(priority_goblin);
-    while (pos > 0 && heap[pos].first < heap[(pos-1)/2].first){
+    heap.push_back(x);
+    while (pos > 0 && heap[pos] < heap[(pos-1)/2]){
         swap(heap[pos], heap[(pos-1)/2]);
         pos = (pos-1)/2;   
     }
 }
-void heap_erase(vector<pair<int, int>>& heap){
+void heap_erase(vector<int>& heap){
     int isz = (int) heap.size();
     heap[0] = heap[isz - 1];
-    heap.pop_back(); isz--;
     int i = 0;
-    while (1){
-        int child1 = 2*i + 1;
-        int child2 = 2*i + 2;
-        if (child1 < isz && child2 < isz){
-            if(heap [child1].first >= heap[child2] .first&& heap[child2].first < heap[i].first) {
-                swap(heap[i], heap[child2]);
-                i = child2;
-            }
-            else if (heap [child1].first <= heap[child2].first && heap[child1].first < heap[i].first){
-                swap(heap[i], heap[child1]);
-                i = child1;
-            }
-            else{
-                break;
-            }
-        } 
-        else if (child1 < isz && child2 >= isz){
-            if(heap[child1].first < heap[i].first) {
-                swap(heap[i], heap[child1]);
-                i = child1;
-            }
-            else break;
-        }
-        else if (child2 < isz && child1 >= isz){
-            if(heap[child2].first < heap[i].first) {
-                swap(heap[i], heap[child2]);
-                i = child2;
-            }
-            else break;
+    while (i*2+2 < isz){
+        int min_son_index = 2*i + 1;
+        if (heap[i*2+2] < heap[min_son_index]) min_son_index = i*2+2;
+        if (heap[i] > heap[min_son_index]){
+            swap(heap[i], heap[min_son_index]);
+            i = min_son_index;
         }
         else break;
     }
+    heap.pop_back();
 }
 
 
