@@ -114,9 +114,9 @@ void get_coords_of_perpendicular_base(LF &x1, LF &y1, LF &x2, LF &y2, LF &xa, LF
         }
     }
 }
-vi path_by_deikstra(vector<vector<vector<LF>>> neighborn, int start, int end)
+vi path_by_dijkstra(vector<vector<vector<LF>>> neighbour, int start, int end)
 {
-    int n = neighborn.size();
+    int n = neighbour.size();
     vi link(n);
     vector<LF> d(n, INF);
     link[start] = -1;
@@ -135,10 +135,10 @@ vi path_by_deikstra(vector<vector<vector<LF>>> neighborn, int start, int end)
         if (d[v] == INF)
             break;
         used[v] = 1;
-        for (size_t j = 0; j < neighborn[v].size(); j++)
+        for (size_t j = 0; j < neighbour[v].size(); j++)
         {
             int to = j;
-            LF len = neighborn[v][j][4];
+            LF len = neighbour[v][j][4];
             if (d[v] + len < d[to])
             {
                 d[to] = d[v] + len;
@@ -155,8 +155,8 @@ vi path_by_deikstra(vector<vector<vector<LF>>> neighborn, int start, int end)
 
 void solve()
 {
-    LF miceX, miceY, cheeseX, cheeseY;
-    cin >> miceX >> miceY >> cheeseX >> cheeseY;
+    LF mouseX, mouseY, cheeseX, cheeseY;
+    cin >> mouseX >> mouseY >> cheeseX >> cheeseY;
     int n;
     cin >> n;
     vector<vpLFLF> figure(n);
@@ -171,10 +171,10 @@ void solve()
             figure[i].push_back(make_pair(x, y));
         }
     }
-    figure.push_back({make_pair(miceX, miceY)});
+    figure.push_back({make_pair(mouseX, mouseY)});
     figure.push_back({make_pair(cheeseX, cheeseY)});
     n += 2;
-    vector<vector<vector<LF>>> neighborn(n, vector<vector<LF>>(n, vector<LF>(5)));
+    vector<vector<vector<LF>>> neighbour(n, vector<vector<LF>>(n, vector<LF>(5)));
     for (int i = 0; i < n; i++)
     { // O(n*n*k*k) ~ 1e6
         for (int j = 0; j < n; j++)
@@ -210,7 +210,7 @@ void solve()
                 x2 -= trace_vector.first/10/dt;
                 y2 -= trace_vector.second/10/dt;
                 vector<LF> temp = {x1, y1, x2, y2, min_dist - 0.2};
-                neighborn[i][j] = temp;
+                neighbour[i][j] = temp;
             }
             else
             {
@@ -240,28 +240,28 @@ void solve()
                 x2 -= trace_vector.first/10/dt;
                 y2 -= trace_vector.second/10/dt;
                 vector<LF> temp = {x1, y1, x2, y2, min_dist - 0.2};
-                neighborn[i][j] = temp;
+                neighbour[i][j] = temp;
             }
         }
     }
-    int mice_index = n-2, cheese_index = n-1;
+    int mouse_index = n-2, cheese_index = n-1;
     for (int i = 0; i < n-1; i++){
-        if (i != n-2 && neighborn[mice_index][i][4] <= 0){
-            mice_index = i;
+        if (i != n-2 && neighbour[mouse_index][i][4] <= 0){
+            mouse_index = i;
         }
-        if (neighborn[cheese_index][i][4] <= 0){
+        if (neighbour[cheese_index][i][4] <= 0){
             cheese_index = i;
         }
     }
-    vi deikstra = path_by_deikstra(neighborn, mice_index, cheese_index);
+    vi dijkstra = path_by_dijkstra(neighbour, mouse_index, cheese_index);
     vpLFLF cur_path;
-    for (int m = 0; m < deikstra.size() - 1; m++)
+    for (int m = 0; m < dijkstra.size() - 1; m++)
     {
-        if (deikstra[m] != mice_index) cur_path.push_back(make_pair(neighborn[deikstra[m]][deikstra[m + 1]][0], neighborn[deikstra[m]][deikstra[m + 1]][1]));
-        if (deikstra[m+1] != cheese_index) cur_path.push_back(make_pair(neighborn[deikstra[m]][deikstra[m + 1]][2], neighborn[deikstra[m]][deikstra[m + 1]][3]));
+        if (dijkstra[m] != mouse_index) cur_path.push_back(make_pair(neighbour[dijkstra[m]][dijkstra[m + 1]][0], neighbour[dijkstra[m]][dijkstra[m + 1]][1]));
+        if (dijkstra[m+1] != cheese_index) cur_path.push_back(make_pair(neighbour[dijkstra[m]][dijkstra[m + 1]][2], neighbour[dijkstra[m]][dijkstra[m + 1]][3]));
     }
-    std::cout << 2 * deikstra.size() - 2 << "\n";
-    std::cout << miceX << " " << miceY << "\n";
+    std::cout << 2 * dijkstra.size() - 2 << "\n";
+    std::cout << mouseX << " " << mouseY << "\n";
     for (int i = 0; i < cur_path.size(); i++)
     {
         std::cout << cur_path[i].first << " " << cur_path[i].second << "\n";
